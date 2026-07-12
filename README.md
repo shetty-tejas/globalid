@@ -20,8 +20,9 @@ IDs, we have a universal identifier that works for objects of both classes.
 
 ## Usage
 
-Mix `GlobalID::Identification` into any model with a `#find(id)` class method.
-Support is automatically included in Active Record.
+Mix `GlobalID::Identification` into any model with a `.find(id)` class method that returns
+an instance of the model, and a `.where(id:)` class method that returns an enumerable of
+instance(s). Support is automatically included in Active Record.
 
 ```ruby
 person_gid = Person.find(1).to_global_id
