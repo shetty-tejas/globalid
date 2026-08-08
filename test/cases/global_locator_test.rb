@@ -115,6 +115,37 @@ class GlobalLocatorTest < ActiveSupport::TestCase
     assert_nil GlobalID::Locator.fetch('This is not a GID')
   end
 
+  test '#locate_many a model without where' do
+    gids = [ PersonModel.new(id: '1').to_gid, PersonModel.new(id: '2').to_gid ]
+
+    found = GlobalID::Locator.locate_many(gids)
+    assert_equal %w[ 1 2 ], found.map(&:id)
+  end
+
+  test '#fetch a model without where' do
+    gid = PersonModel.new(id: '1').to_gid
+
+    found = GlobalID::Locator.fetch(gid)
+    assert_kind_of PersonModel, found
+    assert_equal '1', found.id
+  end
+
+  test '#fetch raises RecordNotFound when a model without where has no record' do
+    gid = PersonModel.new(id: PersonModel::MISSING_ID).to_gid
+
+    assert_raises(GlobalID::Locator::RecordNotFound) do
+      GlobalID::Locator.fetch(gid)
+    end
+  end
+
+  test '#fetch raises RecordUnavailable when a model without where fails' do
+    gid = PersonModel.new(id: PersonModel::ERROR_ID).to_gid
+
+    assert_raises(GlobalID::Locator::RecordUnavailable) do
+      GlobalID::Locator.fetch(gid)
+    end
+  end
+
   test '#fetch raises RecordNotFound when the record no longer exists' do
     gid = Person.new(Person::HARDCODED_ID_FOR_MISSING_PERSON).to_gid
 
