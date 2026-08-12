@@ -243,7 +243,7 @@ class GlobalID
           def find_records(model_class, ids, options)
             model_class = model_class.includes(options[:includes]) if options[:includes]
 
-            if options[:ignore_missing]
+            if options[:ignore_missing] && model_class.respond_to?(:where)
               model_class.where(primary_key(model_class) => ids)
             else
               model_class.find(ids)
